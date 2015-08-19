@@ -1,0 +1,9 @@
+Package: glm2java
+Title: Simple R method to Export a Java GLM Model
+Version: 0.0.0.9000
+Authors@R: person("Wade", "Cooper", , "wadetcooper@gmail.com", role = c("aut", "cre"))
+Description: Provides a simple R method to write a no-dependency Java class of a GLM model.  Java class structure based on H2O's to-Java feature.  GLM model could be created in any method, only need the coefficients and the family type (gaussian, poisson, binomial, and multinomial), assuming the default link function for each family.  Note it is often trivial to write the coefficients out in an equation for a GLM model, so why this package?  It's primarily designed to ease conversion and avoid transcription errors for machine learning models with many predictors, some of which may be penalized to zero and removed from the equation (e.g., using elastic net glmnet in R). 
+Depends: R (>= 3.1.3)
+License: GPL-2
+LazyData: true
+Imports: stringr
