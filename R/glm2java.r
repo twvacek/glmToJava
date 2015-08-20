@@ -62,9 +62,9 @@
 buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, threshold=0.5, addMainMeth=FALSE) {
 	
 	require(stringr)
-    require(dplyr)
-    
-    
+	require(dplyr)
+	
+	
 	clssNm = str_split(filePath,"/")
 	clssNm = str_split(clssNm[[1]][length(clssNm[[1]])],"\\.")[[1]][1]
 	
@@ -77,11 +77,11 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 	if (is.data.frame(modCoefs)) modCoefs=list(target=modCoefs)
 	
 	labels=names(modCoefs)
-
+	
 	
 	## Set up the file
 	if (file.exists(filePath)) file.remove(filePath)
-
+	
 	
 	#######################################################
 	## Write the package and imports and description
@@ -89,10 +89,12 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 	
 	## write package
 	cat(paste("package ",package,";\n\n", sep="") ,file=filePath,append=F)
-
+	
 	## write imports  - only used for main function example
-	cat("import java.sql.*;\n",file=filePath,append=T)
-	cat("import java.util.Arrays;\n",file=filePath,append=T)
+	if (addMainMeth) {
+		cat("import java.sql.*;\n",file=filePath,append=T)
+		cat("import java.util.Arrays;\n",file=filePath,append=T)
+	}
 	
 	cat("\n\n/**Functions to do prediction from GLM*/\n\n",file=filePath,append=T)
 	
@@ -116,7 +118,7 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 	cat(string,file=filePath,append=T)
 	
 	
-
+	
 	#######################################################
 	## Entry prediction method
 	#######################################################
@@ -161,7 +163,7 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 				cat("\t\tpreds[0] = getPrediction(preds,data);\n",file=filePath,append=T) 
 			}
 	)
-
+	
 	cat("\t\treturn preds;\n",file=filePath,append=T) 
 	cat("\t}\n\n",file=filePath,append=T) 
 	
@@ -195,16 +197,16 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 	## Spit out function to get class prediction based on ranking
 	#######################################################
 	if (modType=="multinomial") addUtilFnx(filePath)
-
-
+	
+	
 	## add a main method if requested
-	if (addMainMeth) addMainMethod(modCoefs, filePath)
+	if (addMainMeth) addMainMethod(modCoefs, clssNm, nms, filePath)
 	
 }
 
 
 
-addMainMethod <- function(modCoefs, filePath) {
+addMainMethod <- function(modCoefs, clssNm, nms, filePath) {
 	
 	
 	
@@ -222,13 +224,13 @@ addMainMethod <- function(modCoefs, filePath) {
 	cat("\tpublic static void main(String[] args) {\n",file=filePath, append=T)
 	cat("\t\tConnection c = null;\n",file=filePath, append=T)
 	cat("\t\tStatement stmt = null;\n",file=filePath, append=T)
-		
+	
 	cat("\n\t\t//Get the models\n",file=filePath, append=T) 
 	cat(paste("\t\t",clssNm," model = new ",clssNm,"(); //get model",sep=""),file=filePath, append=T)
 	cat('\n\t\tString dbPath = "data/data.db"; //data location\n',file=filePath, append=T)	
-		
+	
 	cat("\n\t\ttry {",file=filePath, append=T)
-
+	
 	cat('\n\t\t\tClass.forName("org.sqlite.JDBC");\n', file=filePath, append=T)
 	cat('\t\t\tc = DriverManager.getConnection("jdbc:sqlite:"+dbPath);\n', file=filePath, append=T)
 	cat('\t\t\tc.setAutoCommit(false);\n', file=filePath, append=T)
@@ -248,13 +250,13 @@ addMainMethod <- function(modCoefs, filePath) {
 					'\n\t\t\t\t\t\tnew float[',
 					length(modCoefs)+1,
 					']);\n', sep=""),file=filePath, append=T)
-
+	
 	cat("\n\n\t\t\t\t//Do something with the predictions\n",file=filePath, append=T)
 	cat("\n\t\t\t\t//Spit out to console as example\n",file=filePath, append=T)
 	cat('\t\t\t\tString str = Arrays.toString(preds);\n', file=filePath, append=T)
 	cat('\t\t\t\tstr = str.replaceAll("\\\\[", "").replaceAll("\\\\]","");\n', file=filePath, append=T)
 	cat('\t\t\t\tSystem.out.println(str);\n', file=filePath, append=T)
-
+	
 	cat('\t\t\t}\n', file=filePath, append=T)
 	cat('\t\t\trs.close();\n', file=filePath, append=T)
 	cat('\t\t\tstmt.close();\n', file=filePath, append=T)
@@ -272,7 +274,7 @@ addMainMethod <- function(modCoefs, filePath) {
 	cat("}\n",file=filePath,append=T) 
 	
 	
-
+	
 }
 
 
