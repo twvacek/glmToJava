@@ -2,8 +2,10 @@
 R package: takes a coefficient table and converts it to a Java (POJO) file
 
 ## Overview
-A simple converter to take a GLM coefficient table (normal, binomial, poisson, and multinomial) and convert to a pure Java (POJO) file with
-no dependencies.  Note using R's extensive PMML support in conjunction with Java PMML (https://github.com/jpmml)
+A simple converter to take a GLM coefficient table (gaussian, binomial, poisson, and multinomial) and convert to a pure Java (POJO) file with
+no dependencies.  <br />
+
+Note: using R's extensive PMML support in conjunction with Java PMML (https://github.com/jpmml)
 provides much more flexibility, but this simple converter was designed to work on any GLM output (R, SAS, H2O)
 to ease migration to production -- all you need is a coefficient table in the correct format (see example usage in
 R file).    <br />
