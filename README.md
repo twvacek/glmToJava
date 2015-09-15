@@ -16,49 +16,53 @@ into a Java class is trivial, this eases the translation for large numbers of pr
 and will automatically set up the correct link functions.  <br />
 
 ## Installation
-  > library(devtools)  <br />
-  > devtools::install_github("wtcooper/glmToJava")  <br />
-  
+```R
+library(devtools) 
+devtools::install_github("wtcooper/glmToJava")
+```
+
 ## Use  <br />
 
-  > ######### Fit Gaussian model ###  <br />
-  > x = as.matrix(iris[,2:4])  <br />
-  > y = iris[,1]  <br />
-  > normFit=cv.glmnet(x,y, family="gaussian")  <br />
-  > normCoefs = as.data.frame(t(as.matrix(coef(normFit, s="lambda.min"))))  <br />
-  >   <br />
-  > buildGLMJavaClass(modCoefs=normCoefs, modType="gaussian", filePath="./NormalMod.java", package="glm2java", addMainMeth=TRUE)  <br />
-  >   <br />
-  >   <br />
-  > ######### Fit Poisson model ###  <br />
-  > poisFit=cv.glmnet(x,y, family="poisson")  <br />
-  > poisCoefs = as.data.frame(t(as.matrix(coef(poisFit, s="lambda.min"))))  <br />
-  >  <br /> 
-  > ######## With the default naive threshold (0.5)  <br />
-  > buildGLMJavaClass(modCoefs=poisCoefs, modType="poisson",  filePath="./PoissonMod.java", package="glm2java", addMainMeth=TRUE)  <br />
-  >  <br /> 
-  >  <br /> 
-  > ######### Fit binomial model ###  <br />
-  > x = as.matrix(iris[,1:4])  <br />
-  > y = iris[,5]  <br />
-  > y = as.character(y)  <br />
-  > y[y=="virginica"]="versicolor"  <br />
-  > y=as.factor(y)  <br />
-  >  <br /> 
-  > ######## With the default naive threshold (0.5)  <br />
-  > buildGLMJavaClass(modCoefs=binCoefs, modType="binomial", filePath="./BinaryMod.java", package="glm2java", addMainMeth=TRUE)  <br />
-  >  <br /> 
-  >  <br /> 
-  > ######## With a user provided threshold (0.2)  <br />
-  > buildGLMJavaClass(modCoefs=binCoefs, modType="binomial", filePath="./BinaryMod_2.java", package="glm2java", threshold=0.2, addMainMeth=TRUE)  <br />
-  >  <br />
-  >   <br />
-  >   <br />
-  > ######### Fit multinomial model ###  <br />
-  > x = as.matrix(iris[,1:4])  <br />
-  > y = iris[,5]  <br />
-  > multiFit = cv.glmnet(x,y, family="multinomial" )  <br />
-  > multiCoefs = lapply(coef(multiFit, s="lambda.min"),  <br /> 
-  >   FUN=function (x) as.data.frame(t(as.matrix(x))))  <br />
-  >  <br /> 
-  > buildGLMJavaClass(modCoefs=multiCoefs, modType="multinomial", filePath="./MultinomialMod.java", package="glm2java", addMainMeth=TRUE)  <br />
+```R
+### Fit Gaussian model ###  
+x = as.matrix(iris[,2:4])  
+y = iris[,1]  
+normFit=cv.glmnet(x,y, family="gaussian")  
+normCoefs = as.data.frame(t(as.matrix(coef(normFit, s="lambda.min"))))  
+  
+buildGLMJavaClass(modCoefs=normCoefs, modType="gaussian", filePath="./NormalMod.java", package="glm2java", addMainMeth=TRUE)  
+  
+  
+### Fit Poisson model ###  
+poisFit=cv.glmnet(x,y, family="poisson")  
+poisCoefs = as.data.frame(t(as.matrix(coef(poisFit, s="lambda.min"))))  
+  
+# With the default naive threshold (0.5)  
+buildGLMJavaClass(modCoefs=poisCoefs, modType="poisson",  filePath="./PoissonMod.java", package="glm2java", addMainMeth=TRUE)  
+  
+  
+### Fit binomial model ###  
+x = as.matrix(iris[,1:4])  
+y = iris[,5]  
+y = as.character(y)  
+y[y=="virginica"]="versicolor"  
+y=as.factor(y)  
+  
+# With the default naive threshold (0.5)  
+buildGLMJavaClass(modCoefs=binCoefs, modType="binomial", filePath="./BinaryMod.java", package="glm2java", addMainMeth=TRUE)  
+  
+  
+# With a user provided threshold (0.2)  
+buildGLMJavaClass(modCoefs=binCoefs, modType="binomial", filePath="./BinaryMod_2.java", package="glm2java", threshold=0.2, addMainMeth=TRUE)  
+ 
+  
+  
+### Fit multinomial model ###  
+x = as.matrix(iris[,1:4])  
+y = iris[,5]  
+multiFit = cv.glmnet(x,y, family="multinomial" )  
+multiCoefs = lapply(coef(multiFit, s="lambda.min"),   
+  FUN=function (x) as.data.frame(t(as.matrix(x))))  
+  
+buildGLMJavaClass(modCoefs=multiCoefs, modType="multinomial", filePath="./MultinomialMod.java", package="glm2java", addMainMeth=TRUE)  
+```
