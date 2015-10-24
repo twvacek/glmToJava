@@ -47,6 +47,9 @@ y = iris[,5]
 y = as.character(y)  
 y[y=="virginica"]="versicolor"  
 y=as.factor(y)  
+
+binFit=cv.glmnet(x,y, family="binomial")  
+binCoefs = as.data.frame(t(as.matrix(coef(binFit, s="lambda.min"))))  
   
 # With the default naive threshold (0.5)  
 buildGLMJavaClass(modCoefs=binCoefs, modType="binomial", filePath="./BinaryMod.java", package="glm2java", addMainMeth=TRUE)  
