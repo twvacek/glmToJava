@@ -206,7 +206,7 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 		if(!any(grep("[Ii]ntercept|^$", names(modCoefs[[i]][1])))) {
 			stop('first element of coefficients expected to be intercept or blank')
 		}
-		if(any(grep("[[Ii]ntercept", names(modCoefs[[i]][1])))) {
+		if(any(grep("[Ii]ntercept", names(modCoefs[[i]][1])))) {
 			intercept = modCoefs[[i]][1]
 		}
 			
