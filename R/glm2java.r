@@ -116,13 +116,38 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 					"\t*  @return the predicted model score\n",
 					"\t*/\n", sep=""))
 	cat(string,file=filePath,append=T)
+
+	######################################################
+	## Predicted class names callback
+	######################################################
+	cat('\tprivate static final String[] classNames  = {""', file=filePath, append=T)
+	for (i in 1:length(labels)) {
+		cat(paste(' ,"',labels[i],'"',sep=""), file=filePath, append=T)
+	}
+	cat("};\n", file=filePath, append=T)
+	cat("\tpublic static String[] getClassNames(){\n", file=filePath, append=T)
+	cat("\t\treturn classNames;\n\t}\n", file=filePath, append=T)
+	
+	#####################################################
+	## Feature names callback
+	#####################################################
+	cat("\tprivate static final String[] featureNames = {\n", file=filePath, append=T)
+	nms = names(modCoefs[[1]])
+	cat(paste('\t\t"', nms[2],'"', sep=""), file=filePath, append=T)
+	for (i in 3:length(nms)) {
+		cat(paste(',\n\t\t"',nms[i],'"', sep=""), file=filePath, append=T)
+	}
+	cat("\n\t};\n", file=filePath, append=T)
+	cat("\tpublic static String[] getFeatureNames(){\n", file=filePath, append=T)
+	cat("\t\treturn featureNames;\n\t}\n", file=filePath, append=T)
+	
 	
 	
 	
 	#######################################################
 	## Entry prediction method
 	#######################################################
-	cat("\tpublic final float[] predict( double[] data, float[] preds) {\n",file=filePath,append=T) 
+	cat("\tpublic static float[] predict( double[] data, float[] preds) {\n",file=filePath,append=T) 
 	cat("\n\t\t//fill in empty preds[] vector\n",file=filePath,append=T) 
 	cat("\t\tjava.util.Arrays.fill(preds,0f);\n\n",file=filePath,append=T) 
 	
@@ -176,9 +201,15 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 	for (i in 1:length(modCoefs)) {
 		cat(paste("\tprivate static float ", labels[i], "Predict(double[] data) {\n",sep=""),file=filePath,append=T) 
 		
-		intercept=try(unlist(modCoefs[[i]] %>% select(contains("Intercept"), contains("intercept"))), silent=T)
-		if (class(intercept)=="try-error") intercept=0
+		intercept = 0
 		
+		if(!any(grep("[Ii]ntercept|^$", names(modCoefs[[i]][1])))) {
+			stop('first element of coefficients expected to be intercept or blank')
+		}
+		if(any(grep("[[Ii]ntercept", names(modCoefs[[i]][1])))) {
+			intercept = modCoefs[[i]][1]
+		}
+			
 		linPredString = paste("float pred = (float) (", intercept,"\t//Intercept\n", sep="")
 		
 		for (j in 2:length(modCoefs[[i]])) {
@@ -202,6 +233,7 @@ buildGLMJavaClass <- function (modCoefs, modType="gaussian", filePath, package, 
 	## add a main method if requested
 	if (addMainMeth) addMainMethod(modCoefs, clssNm, nms, filePath)
 	
+	cat("}", file=filePath,append=T)
 }
 
 
@@ -270,8 +302,7 @@ addMainMethod <- function(modCoefs, clssNm, nms, filePath) {
 	cat('\t}\n', file=filePath, append=T)
 	
 	
-	# End of the class
-	cat("}\n",file=filePath,append=T) 
+	# class ended previously
 	
 	
 	

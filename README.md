@@ -15,10 +15,18 @@ was first created since H2O didn't provide Java output for their GLM model at th
 into a Java class is trivial, this eases the translation for large numbers of predictors (e.g., with an lasso/ridge/elastic net model)
 and will automatically set up the correct link functions.  <br />
 
+Compared to wtcooper/glmToJava, this code generates callback methods getClasses() and getFeatureNames() that
+define the expected order of the outputs and inputs (respectively).  In particular, this saves time and effort
+in that, Rather than building up the features array manually,
+one can fetch the values from a dictionary.  This code also handles intercepts differently.
+The first column of each element of the coefficients list is expected to be the intercept
+with a column name that contains "Intercept" or "intercept" or is blank.  The code will not 
+look any further for the intercept, and will give an error if the first column is apparently not the intercept.
+
 ## Installation
 ```R
 library(devtools) 
-devtools::install_github("wtcooper/glmToJava")
+devtools::install_github("twvacek/glmToJava")
 ```
 
 ## Use  <br />
